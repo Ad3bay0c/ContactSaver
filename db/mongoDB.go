@@ -11,11 +11,11 @@ import (
 )
 
 type MongoDB struct {
-	DB	*mongo.Client
+	DB *mongo.Client
 }
 
 func (mongodb *MongoDB) Init() {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_DB_URI")))
 	if err != nil {
@@ -29,4 +29,7 @@ func (mongodb *MongoDB) Init() {
 		log.Printf("Database Connected Successfully")
 		mongodb.DB = client
 	}
+}
+func (mongodb *MongoDB) InitializeCollection(collection string) *mongo.Collection {
+	return mongodb.DB.Database("ContactKeeper").Collection(collection)
 }
