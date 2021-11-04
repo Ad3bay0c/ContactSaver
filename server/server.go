@@ -14,9 +14,9 @@ import (
 )
 
 type Server struct {
-	DB	db.DB
-	ErrorLog	*log.Logger
-	InfoLog	*log.Logger
+	DB       db.DB
+	ErrorLog *log.Logger
+	InfoLog  *log.Logger
 }
 
 func (s *Server) ApplicationSetup() {
@@ -48,7 +48,7 @@ func (s *Server) Start() {
 	s.Routes(router)
 	server := &http.Server{
 		Handler: router,
-		Addr: port,
+		Addr:    port,
 	}
 
 	go func() {
@@ -69,7 +69,7 @@ func (s *Server) Start() {
 	// The code always stays until it gets an interrupt or terminate signals, before it proceed to the next line
 	<-quit
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("Serever Forced to Exit: %v", err.Error())
