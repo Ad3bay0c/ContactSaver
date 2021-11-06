@@ -19,6 +19,6 @@ func GenerateToken(userID interface{}) (string, error) {
 
 func VerifyToken(token string) (*jwt.Token, error){
 	return jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return os.Getenv(os.Getenv("JWT_SECRET")), nil
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 }
