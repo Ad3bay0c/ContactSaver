@@ -14,5 +14,5 @@ type DB interface {
 	GetAllContacts(userID string) ([]models.Contact, error)
 	GetAContact(userID, contactID string) (models.Contact, error)
 	DeleteContact(userID, contactID string) error
-
+	UpdateContact(contact *models.Contact, contactID string) error
 }
