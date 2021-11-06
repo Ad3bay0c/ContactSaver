@@ -11,5 +11,6 @@ type DB interface {
 	InitializeCollection(collection string) *mongo.Collection
 	GetAuthUser(id string) (*models.User, error)
 	CreateContact(contact *models.Contact) error
+	GetAllContacts(userID string) ([]models.Contact, error)
 
 }
