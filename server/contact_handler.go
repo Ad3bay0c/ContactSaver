@@ -74,3 +74,31 @@ func (s *Server) GetAContact() gin.HandlerFunc {
 	}
 }
 
+func (s *Server) UpdateContact() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID, ok := c.Get("userID")
+		if !ok {
+			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			return
+		}
+		ID := userID.(string)
+		contact := &models.Contact{}
+		errs:= services.Decode(c, contact)
+		if errs != nil {
+			responses.JSON(c, http.StatusBadRequest, "", errs, nil)
+			return
+		}
+		contact.Date = time.Now()
+		contact.UserID = ID
+		contactID := c.Param("contactID")
+
+		err := s.DB.UpdateContact(contact, contactID)
+		if err != nil {
+			responses.JSON(c, http.StatusBadRequest, "", "Error Updating Contact", nil)
+			return
+		}
+		responses.JSON(c, http.StatusCreated, "Contact Updated Successfully", "", nil)
+		return
+	}
+}
+
