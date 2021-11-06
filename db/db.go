@@ -12,5 +12,6 @@ type DB interface {
 	GetAuthUser(id string) (*models.User, error)
 	CreateContact(contact *models.Contact) error
 	GetAllContacts(userID string) ([]models.Contact, error)
+	GetAContact(userID, contactID string) (models.Contact, error)
 
 }
