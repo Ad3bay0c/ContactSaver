@@ -30,3 +30,14 @@ func (mongodb *MongoDB) GetAllContacts(userID string) ([]models.Contact, error) 
 	return contacts, err
 }
 
+func (mongodb *MongoDB) GetAContact(userID, contactID string) (models.Contact, error) {
+	var contact models.Contact
+	collection := mongodb.InitializeCollection("contactss")
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
+	defer cancelFunc()
+	ID, _ := primitive.ObjectIDFromHex(contactID)
+	err := collection.FindOne(ctx, bson.M{"user_id": userID, "_id": ID}).Decode(&contact)
+	return contact, err
+}
+
+
