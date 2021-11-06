@@ -51,3 +51,14 @@ func (mongodb *MongoDB) DeleteContact(userID, contactID string) error {
 	return err
 }
 
+func (mongodb *MongoDB) UpdateContact(contact *models.Contact, contactID string) error {
+	collection := mongodb.InitializeCollection("contactss")
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
+	defer cancelFunc()
+	ID, _ := primitive.ObjectIDFromHex(contactID)
+	contact.ID = ID
+	err := collection.
+		FindOneAndUpdate(ctx, bson.M{"_id": ID}, bson.D{{"$set", *contact}}).
+		Decode(contact)
+	return err
+}
