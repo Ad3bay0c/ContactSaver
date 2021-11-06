@@ -13,5 +13,6 @@ type DB interface {
 	CreateContact(contact *models.Contact) error
 	GetAllContacts(userID string) ([]models.Contact, error)
 	GetAContact(userID, contactID string) (models.Contact, error)
+	DeleteContact(userID, contactID string) error
 
 }
