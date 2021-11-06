@@ -34,3 +34,22 @@ func (s *Server) CreateContact() gin.HandlerFunc {
 		return
 	}
 }
+
+func (s *Server) GetAllContacts() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID, ok := c.Get("userID")
+		if !ok {
+			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			return
+		}
+		ID := userID.(string)
+		contacts, err := s.DB.GetAllContacts(ID)
+		if err != nil {
+			s.ErrorLog.Println(err.Error())
+			responses.JSON(c, http.StatusInternalServerError, "", "Error Fetching Contacts", nil)
+			return
+		}
+		responses.JSON(c, http.StatusCreated, "Fetched Successfully", "", contacts)
+		return
+	}
+}
