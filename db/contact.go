@@ -41,3 +41,13 @@ func (mongodb *MongoDB) GetAContact(userID, contactID string) (models.Contact, e
 }
 
 
+func (mongodb *MongoDB) DeleteContact(userID, contactID string) error {
+	var contact models.Contact
+	collection := mongodb.InitializeCollection("contactss")
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
+	defer cancelFunc()
+	ID, _ := primitive.ObjectIDFromHex(contactID)
+	err := collection.FindOneAndDelete(ctx, bson.M{"user_id": userID, "_id": ID}).Decode(&contact)
+	return err
+}
+
