@@ -9,4 +9,6 @@ type DB interface {
 	CreateUser(user *models.User) (interface{}, error)
 	GetUserByEmail(email string) (*models.User, bool)
 	InitializeCollection(collection string) *mongo.Collection
+	GetAuthUser(id string) (*models.User, error)
+
 }
