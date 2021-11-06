@@ -15,7 +15,7 @@ type MongoDB struct {
 }
 
 func (mongodb *MongoDB) Init() {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Minute)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_DB_URI")))
 	if err != nil {
