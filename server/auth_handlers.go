@@ -5,6 +5,7 @@ import (
 	"github.com/Ad3bay0c/ContactSaver/server/responses"
 	"github.com/Ad3bay0c/ContactSaver/services"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 )
@@ -31,7 +32,7 @@ func (s *Server) SignUp() gin.HandlerFunc {
 			responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
 			return
 		}
-		user.Password = string(hashPassword)
+		user.PasswordHash = string(hashPassword)
 		user.CreatedAt = time.Now()
 		id, err := s.DB.CreateUser(user)
 		if err != nil {
@@ -65,7 +66,7 @@ func (s *Server) Login() gin.HandlerFunc {
 			responses.JSON(c, http.StatusBadRequest, "", "Email Does not Exist", nil)
 			return
 		}
-		err := services.ComparePassword(user.Password, DbUser.Password)
+		err := services.ComparePassword(user.Password, DbUser.PasswordHash)
 		if err != nil {
 			responses.JSON(c, http.StatusBadRequest, "", "Incorrect Password", nil)
 			return
@@ -86,7 +87,19 @@ func (s *Server) Login() gin.HandlerFunc {
 // @route GET
 func (s *Server) GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		responses.JSON(c, 200, "Fetched Successfully", "", nil)
+		userID, ok := c.Get("userID")
+		if !ok {
+			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			return
+		}
+		ID := userID.(string)
+		user, err := s.DB.GetAuthUser(ID)
+		if err != nil {
+			log.Println(err.Error())
+			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			return
+		}
+		responses.JSON(c, 200, "Fetched Successfully", "", user)
 	}
 
 }
