@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/Ad3bay0c/ContactSaver/server/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"time"
@@ -25,5 +26,14 @@ func (s *Server) Routes(router *gin.Engine) {
 	AuthRouter.POST("/", s.SignUp())
 	AuthRouter.POST("/login", s.Login())
 
+	UserRouter.Use(middleware.Authorize())
 	UserRouter.GET("/", s.GetUser())
+	ContactRouter := UserRouter.Group("/contact")
+	{
+		ContactRouter.POST("/", s.CreateContact())
+		ContactRouter.GET("/", s.GetAllContacts())
+		ContactRouter.GET("/:contactID", s.GetAContact())
+		ContactRouter.DELETE("/:contactID", s.DeleteContact())
+		ContactRouter.PUT("/:contactID", s.UpdateContact())
+	}
 }
