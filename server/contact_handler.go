@@ -102,3 +102,22 @@ func (s *Server) UpdateContact() gin.HandlerFunc {
 	}
 }
 
+func (s *Server) DeleteContact() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID, ok := c.Get("userID")
+		if !ok {
+			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			return
+		}
+		ID := userID.(string)
+		contactID := c.Param("contactID")
+		err := s.DB.DeleteContact(ID, contactID)
+		if err != nil {
+			s.ErrorLog.Println(err.Error())
+			responses.JSON(c, http.StatusInternalServerError, "", "Invalid Contact ID", nil)
+			return
+		}
+		responses.JSON(c, http.StatusCreated, "Deleted Successfully", "", nil)
+		return
+	}
+}
