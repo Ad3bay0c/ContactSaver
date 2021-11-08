@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Ad3bay0c/ContactSaver/db"
+	"github.com/rs/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -39,6 +40,7 @@ func (s *Server) ApplicationSetup() {
 
 func (s *Server) Start() {
 	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
+
 	if port == ":" {
 		port += "2500"
 	}
@@ -46,8 +48,14 @@ func (s *Server) Start() {
 
 	s.ApplicationSetup()
 	s.Routes(router)
+	c := cors.New(cors.Options{
+		AllowCredentials: true,
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+	})
+	handler := c.Handler(router)
 	server := &http.Server{
-		Handler: router,
+		Handler: handler,
 		Addr:    port,
 	}
 
