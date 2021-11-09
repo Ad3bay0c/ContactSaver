@@ -18,34 +18,40 @@ func (s *Server) SignUp() gin.HandlerFunc {
 		user := &models.User{}
 		errs:= services.Decode(c, user)
 		if errs != nil {
-			responses.JSON(c, http.StatusBadRequest, "", errs, nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": errs})
+			//responses.JSON(c, http.StatusBadRequest, "", errs, nil)
 			return
 		}
 		_, ok := s.DB.GetUserByEmail(user.Email)
 		if ok {
-			responses.JSON(c, http.StatusBadRequest, "", "Email Already Taken", nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User already exists"})
+			//responses.JSON(c, http.StatusBadRequest, "", "Email Already Taken", nil)
 			return
 		}
 		hashPassword, err := services.HashPassword(user.Password)
 		if err != nil {
 			s.ErrorLog.Println(err.Error())
-			responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+			//responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
 			return
 		}
 		user.PasswordHash = string(hashPassword)
 		user.CreatedAt = time.Now()
 		id, err := s.DB.CreateUser(user)
 		if err != nil {
-			responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+			//responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
 			return
 		}
 		token, err := services.GenerateToken(id)
 		if err != nil {
 			s.ErrorLog.Println(err.Error())
-			responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+			//responses.JSON(c, http.StatusBadRequest, "", "Internal Server Error", nil)
 			return
 		}
-		responses.JSON(c, http.StatusCreated, "User Created Successfully", nil, token)
+		c.JSON(http.StatusCreated, gin.H{"token": token})
+		//responses.JSON(c, http.StatusCreated, "User Created Successfully", nil, token)
 	}
 }
 
@@ -89,17 +95,20 @@ func (s *Server) GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, ok := c.Get("userID")
 		if !ok {
-			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+			//responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
 			return
 		}
 		ID := userID.(string)
 		user, err := s.DB.GetAuthUser(ID)
 		if err != nil {
 			log.Println(err.Error())
-			responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			//responses.JSON(c, http.StatusInternalServerError, "", "Internal Server Error", nil)
 			return
 		}
-		responses.JSON(c, 200, "Fetched Successfully", "", user)
+		c.JSON(http.StatusOK, gin.H{"user": user})
+		//responses.JSON(c, 200, "Fetched Successfully", "", user)
 	}
 
 }
