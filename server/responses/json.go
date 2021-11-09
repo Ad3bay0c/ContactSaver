@@ -8,7 +8,7 @@ import (
 
 func JSON(c *gin.Context, code int, message string, err interface{}, data interface{}) {
 	response := gin.H{
-		"Error":      err,
+		"error":      err,
 		"message":    message,
 		"data":       data,
 		"status":     http.StatusText(code),
