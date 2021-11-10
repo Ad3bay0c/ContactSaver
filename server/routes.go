@@ -21,11 +21,11 @@ func (s *Server) Routes(router *gin.Engine) {
 	}))
 
 	AuthRouter := router.Group("/api/auth")
-	UserRouter := router.Group("/api/user")
 	//ContactRouter := UserRouter.Group("/contact")
 	AuthRouter.POST("/", s.SignUp())
 	AuthRouter.POST("/login", s.Login())
 
+	UserRouter := router.Group("/api/user")
 	UserRouter.Use(middleware.Authorize())
 	UserRouter.GET("/", s.GetUser())
 	ContactRouter := UserRouter.Group("/contact")
