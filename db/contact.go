@@ -9,12 +9,13 @@ import (
 	"time"
 )
 
-func (mongodb *MongoDB) CreateContact(contact *models.Contact) error {
+func (mongodb *MongoDB) CreateContact(contact *models.Contact) (interface{}, error) {
 	collection := mongodb.InitializeCollection("contactss")
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 30 * time.Second)
 	defer cancelFunc()
-	_, err := collection.InsertOne(ctx, contact)
-	return err
+	result, err := collection.InsertOne(ctx, contact)
+
+	return result.InsertedID, err
 }
 func (mongodb *MongoDB) GetAllContacts(userID string) ([]models.Contact, error) {
 	var contacts []models.Contact
