@@ -10,7 +10,7 @@ type DB interface {
 	GetUserByEmail(email string) (*models.User, bool)
 	InitializeCollection(collection string) *mongo.Collection
 	GetAuthUser(id string) (*models.User, error)
-	CreateContact(contact *models.Contact) error
+	CreateContact(contact *models.Contact) (interface{}, error)
 	GetAllContacts(userID string) ([]models.Contact, error)
 	GetAContact(userID, contactID string) (models.Contact, error)
 	DeleteContact(userID, contactID string) error
