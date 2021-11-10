@@ -1,1 +1,1 @@
-web: ContactKeeper
+web: ./bin/ContactSaver
