@@ -5,6 +5,7 @@ import (
 	"github.com/Ad3bay0c/ContactSaver/server/responses"
 	"github.com/Ad3bay0c/ContactSaver/services"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"time"
 )
@@ -25,12 +26,14 @@ func (s *Server) CreateContact() gin.HandlerFunc {
 		}
 		contact.UserID = ID
 		contact.Date = time.Now()
-		err := s.DB.CreateContact(contact)
+		id, err := s.DB.CreateContact(contact)
 		if err != nil {
 			responses.JSON(c, http.StatusBadRequest, "", "Error Creating Contact", nil)
 			return
 		}
-		responses.JSON(c, http.StatusCreated, "Contact Created Successfully", "", nil)
+		contactID := id.(primitive.ObjectID)
+		contact.ID = contactID
+		responses.JSON(c, http.StatusCreated, "Contact Created Successfully", "", contact)
 		return
 	}
 }
