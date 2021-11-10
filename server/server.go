@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/Ad3bay0c/ContactSaver/db"
-	"github.com/rs/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -52,6 +52,8 @@ func (s *Server) Start() {
 		AllowCredentials: true,
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:     []string{"*"},
+		ExposedHeaders:    []string{"Content-Length"},
 	})
 	handler := c.Handler(router)
 	server := &http.Server{
